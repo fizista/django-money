@@ -3,11 +3,11 @@ Created on May 7, 2011
 
 @author: jake
 '''
-
+from decimal import Decimal
 from django.test import TestCase
 from moneyed import Money
 from .testapp.models import (ModelWithVanillaMoneyField,
-    ModelRelatedToModelWithMoney, ModelWithChoicesMoneyField)
+    ModelRelatedToModelWithMoney, ModelWithChoicesMoneyField, InheritorModel)
 import moneyed
 
 
@@ -101,6 +101,19 @@ class VanillaMoneyFieldTestCase(TestCase):
         )
         model.save()
 
+    def testAbstract(self):
+        model = InheritorModel(
+            name="abc",
+            price=Money("12.3", moneyed.PLN)
+        )
+        model.save()
+
+        self.assertDictEqual(
+            InheritorModel.objects.filter(id=model.id).values()[0],
+            {'id': 1,
+             'name': 'abc',
+             'price_currency': 'PLN',
+             'price': Decimal("12.3")})
 
 class RelatedModelsTestCase(TestCase):
 

@@ -245,10 +245,6 @@ class MoneyField(models.DecimalField):
 
     def contribute_to_class(self, cls, name):
 
-        # Don't run on abstract classes
-        if cls._meta.abstract:
-            return
-
         c_field_name = currency_field_name(name)
         # Do not change default=self.default_currency.code, needed
         # for south compat.
@@ -258,8 +254,10 @@ class MoneyField(models.DecimalField):
             choices=self.currency_choices
         )
         c_field.creation_counter = self.creation_counter
-        cls.add_to_class(c_field_name, c_field)
 
+        # Only once we add this field
+        if not c_field in cls._meta.fields:
+            cls.add_to_class(c_field_name, c_field)
 
         super(MoneyField, self).contribute_to_class(cls, name)
 

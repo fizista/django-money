@@ -21,11 +21,7 @@ def _expand_money_params(kwargs):
         if isinstance(value, Money):
             # Get rid of __lt, __gt etc for the currency lookup
             path = name.split(LOOKUP_SEP)
-            if path[-1] in QUERY_TERMS:
-                clean_name = LOOKUP_SEP.join(path[:-1])
-            else:
-                clean_name = name
-
+            clean_name = LOOKUP_SEP.join(path[:-1]) if path[-1] in QUERY_TERMS else name
             to_append[name] = value.amount
             to_append[get_currency_field_name(clean_name)] = smart_unicode(
                 value.currency)

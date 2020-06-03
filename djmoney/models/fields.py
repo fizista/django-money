@@ -196,7 +196,9 @@ class CurrencyField(models.CharField):
         return "CharField"
 
     def contribute_to_class(self, cls, name):
-        if not self.frozen_by_south and not name in [f.name for f in cls._meta.fields]:
+        if not self.frozen_by_south and name not in [
+            f.name for f in cls._meta.fields
+        ]:
             super(CurrencyField, self).contribute_to_class(cls, name)
 
 
@@ -283,7 +285,7 @@ class MoneyField(models.DecimalField):
 
     def get_db_prep_lookup(self, lookup_type, value, connection,
                            prepared=False):
-        if not lookup_type in SUPPORTED_LOOKUPS:
+        if lookup_type not in SUPPORTED_LOOKUPS:
             raise NotSupportedLookup(lookup_type)
         value = self.get_db_prep_save(value, connection)
         return super(MoneyField, self).get_db_prep_lookup(lookup_type, value,
